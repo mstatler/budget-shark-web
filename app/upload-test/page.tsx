@@ -1,3 +1,7 @@
+export const dynamic = 'force-dynamic';  // disable static prerendering
+export const revalidate = 0;             // no ISR either
+
+
 "use client";
 
 import * as React from "react";
