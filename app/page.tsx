@@ -1,78 +1,52 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
-import { getBrowserClient } from '@/lib/supabase/client';
+import * as React from "react";
 
 export default function Home() {
-  const supabase = useMemo(() => getBrowserClient(), []);
-  const [email, setEmail] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [email, setEmail] = React.useState("");
+  const [state, setState] = React.useState<"idle"|"submitting"|"ok"|"err">("idle");
+  const [msg, setMsg] = React.useState("");
 
-  useEffect(() => {
-    let ignore = false;
-
-    (async () => {
-      const { data } = await supabase.auth.getUser();
-      if (!ignore) {
-        setEmail(data.user?.email ?? null);
-        setLoading(false);
-      }
-    })();
-
-    const { data: sub } = supabase.auth.onAuthStateChange((_evt, session) => {
-      if (!ignore) setEmail(session?.user?.email ?? null);
-    });
-
-    return () => {
-      ignore = true;
-      sub.subscription?.unsubscribe?.();
-    };
-  }, [supabase]);
-
-  const isLoggedIn = !!email;
-
-  async function handleSignOut() {
-    await supabase.auth.signOut();
-    location.reload();
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setState("submitting"); setMsg("");
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source: "coming-soon" }),
+      });
+      const json = await res.json();
+      if (json?.ok) { setState("ok"); setMsg("Thanks! You're on the list."); setEmail(""); }
+      else { setState("err"); setMsg(json?.error || "Please try again."); }
+    } catch (err: any) {
+      setState("err"); setMsg(err?.message || "Network error.");
+    }
   }
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-8 bg-zinc-50 dark:bg-black text-black dark:text-zinc-50 font-sans">
-      <h1 className="text-4xl font-extrabold mb-4 text-emerald-600 dark:text-emerald-400">
-        Budget Shark
-      </h1>
+    <main className="min-h-screen flex items-center justify-center p-8">
+      <div className="max-w-xl w-full space-y-6 text-center">
+        <h1 className="text-3xl font-semibold">Budget Shark — Coming Soon</h1>
+        <p className="text-gray-600">Cleaner budgeting & forecasting. Fewer spreadsheets.</p>
 
-      <p className="mb-10 text-lg text-zinc-600 dark:text-zinc-400 text-center max-w-lg">
-        {isLoggedIn
-          ? `Welcome back, ${email || 'user'}!`
-          : 'Securely track your finances. Sign in to get started.'}
-      </p>
-
-      <div className="flex flex-col sm:flex-row gap-4">
-        {isLoggedIn ? (
-          <>
-            <Link
-              href="/dashboard"
-              className="flex h-12 items-center justify-center rounded-full bg-emerald-600 px-6 font-semibold text-white transition-opacity hover:opacity-90 shadow-lg"
-            >
-              Go to Dashboard
-            </Link>
-            <button
-              onClick={handleSignOut}
-              className="h-12 rounded-full border px-6 font-semibold transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
-            >
-              Sign out
-            </button>
-          </>
-        ) : (
-          <Link
-            href="/auth/sign-in"
-            className="flex h-12 items-center justify-center rounded-full border border-solid border-emerald-600 px-6 font-semibold text-emerald-600 transition-colors hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-zinc-800"
+        <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2 justify-center">
+          <input
+            type="email" required value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className="w-full sm:w-72 rounded border border-gray-300 px-3 py-2"
+          />
+          <button
+            disabled={state==="submitting"}
+            className={`rounded px-4 py-2 text-white ${state==="submitting" ? "bg-gray-500" : "bg-black hover:bg-gray-900"}`}
           >
-            Go to Sign-In
-          </Link>
-        )}
+            {state==="submitting" ? "Adding…" : "Notify me"}
+          </button>
+        </form>
+
+        {msg && <p className={`text-sm ${state==="ok" ? "text-green-700" : "text-red-700"}`}>{msg}</p>}
+        <p className="text-xs text-gray-500">We’ll only email you about the beta launch.</p>
       </div>
     </main>
   );
