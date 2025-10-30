@@ -1,53 +1,53 @@
-"use client";
+import Link from "next/link";
 
-import * as React from "react";
-
-export default function Home() {
-  const [email, setEmail] = React.useState("");
-  const [state, setState] = React.useState<"idle"|"submitting"|"ok"|"err">("idle");
-  const [msg, setMsg] = React.useState("");
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setState("submitting"); setMsg("");
-    try {
-      const res = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source: "coming-soon" }),
-      });
-      const json = await res.json();
-      if (json?.ok) { setState("ok"); setMsg("Thanks! You're on the list."); setEmail(""); }
-      else { setState("err"); setMsg(json?.error || "Please try again."); }
-    } catch (err: any) {
-      setState("err"); setMsg(err?.message || "Network error.");
-    }
-  }
-
+export default function HomePage() {
   return (
-    <main className="min-h-screen flex items-center justify-center p-8">
-      <div className="max-w-xl w-full space-y-6 text-center">
-        <h1 className="text-3xl font-semibold">Budget Shark — Coming Soon</h1>
-        <p className="text-gray-600">Cleaner budgeting & forecasting. Fewer spreadsheets.</p>
+    <main className="min-h-screen bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-50">
+      {/* Header */}
+      <header className="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto">
+        <Link href="/" className="text-base font-semibold tracking-tight">
+          Budget Shark
+        </Link>
+        <nav className="flex items-center gap-4 text-sm">
+          <Link href="/blog" className="hover:text-sky-600">
+            Blog
+          </Link>
+        </nav>
+      </header>
 
-        <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2 justify-center">
+      {/* Hero */}
+      <section className="mx-auto flex max-w-2xl flex-col gap-6 px-6 py-20 text-center">
+        <p className="mx-auto inline-flex rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-700 ring-1 ring-sky-100 dark:bg-sky-900/40 dark:text-sky-100">
+          Coming soon
+        </p>
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          Cleaner budgeting &amp; forecasting for teams
+        </h1>
+        <p className="text-slate-500 dark:text-slate-300">
+          thebudgetshark.com is getting ready. Join the waitlist and we&apos;ll invite you when we open onboarding.
+        </p>
+
+        {/* Waitlist form */}
+        <form
+          className="mx-auto flex w-full max-w-md flex-col gap-3 sm:flex-row"
+          action="/api/waitlist"
+          method="POST"
+        >
           <input
-            type="email" required value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            type="email"
+            required
             placeholder="you@example.com"
-            className="w-full sm:w-72 rounded border border-gray-300 px-3 py-2"
+            className="flex-1 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100 dark:border-slate-700 dark:bg-slate-900"
           />
           <button
-            disabled={state==="submitting"}
-            className={`rounded px-4 py-2 text-white ${state==="submitting" ? "bg-gray-500" : "bg-black hover:bg-gray-900"}`}
+            type="submit"
+            className="rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
           >
-            {state==="submitting" ? "Adding…" : "Notify me"}
+            Join waitlist
           </button>
         </form>
-
-        {msg && <p className={`text-sm ${state==="ok" ? "text-green-700" : "text-red-700"}`}>{msg}</p>}
-        <p className="text-xs text-gray-500">We’ll only email you about the beta launch.</p>
-      </div>
+      </section>
     </main>
   );
 }
