@@ -1,13 +1,9 @@
-import createMDX from "@next/mdx";
-import type { NextConfig } from "next";
+// next.config.js
 
-const withMDX = createMDX({
-  // Optional: you could add rehype/remark plugins here later if you want
-});
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
-  pageExtensions: ["ts", "tsx", "mdx"], // Let Next handle .mdx pages too
+  pageExtensions: ["ts", "tsx", "mdx"],
 };
 
-export default withMDX(nextConfig);
+module.exports = nextConfig;
