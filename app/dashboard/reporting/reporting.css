@@ -1,0 +1,150 @@
+/* --- Budget Shark Reporting Styles --- */
+
+/* Make the reporting card feel a bit more premium / rounded */
+.bs-reporting-card {
+  padding: 1.5rem 1.75rem 1.75rem;
+  border-radius: 1.25rem;
+}
+
+/* Top row: Entity / Department filters + Export button */
+.bs-reporting-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.bs-reporting-toolbar .bs-toolbar-left {
+  display: flex;
+  gap: 1rem;
+}
+
+/* In this card, we hide the tiny field labels so the selects
+   look like Loveable's "pill" dropdowns with the text inside */
+.bs-reporting-card .bs-field-label {
+  display: none;
+}
+
+/* Slightly wider filter dropdowns */
+.bs-reporting-toolbar .bs-select {
+  min-width: 200px;
+}
+
+/* Three-column layout for the two scenarios + variance */
+.bs-reporting-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+}
+
+/* Scenario selectors above each scenario column */
+.bs-reporting-column-header {
+  margin-bottom: 0.5rem;
+}
+
+.bs-reporting-column-header .bs-select {
+  width: 100%;
+}
+
+/* Variance header (right column) */
+.bs-reporting-variance-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.bs-reporting-variance-subtitle {
+  font-size: 0.8rem;
+  color: #6b7280; /* muted gray */
+}
+
+/* Variance coloring */
+.bs-variance-positive {
+  color: #16a34a; /* green */
+  font-weight: 500;
+}
+
+.bs-variance-negative {
+  color: #dc2626; /* red */
+  font-weight: 500;
+}
+
+/* Keep all three column headers perfectly aligned */
+.bs-reporting-column-header,
+.bs-reporting-variance-title {
+  display: flex;
+  align-items: center;
+  height: 2.5rem; /* consistent height across all header rows */
+}
+
+/* --- Variance header alignment + spacing --- */
+.bs-reporting-column-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 2.5rem;
+}
+
+.bs-reporting-variance-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem; /* space between "Variance" and dynamic label */
+}
+
+.bs-reporting-variance-subtitle {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* --- View toggle (FY / Month / YTD) --- */
+.bs-seg {
+  display: inline-flex;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #f9fafb;
+  margin-left: 0.5rem;
+}
+
+.bs-seg-btn {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.9rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.bs-seg-btn:hover { background: #eef2f7; }
+
+.bs-seg-btn.is-active {
+  background: #2563eb;
+  color: #fff;
+}
+
+.bs-seg-btn.is-disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.bs-month-select {
+  min-width: 140px;
+}
+
+/* Keep all three column headers aligned & variance spacing */
+.bs-reporting-column-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 2.5rem;
+}
+
+.bs-reporting-variance-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}

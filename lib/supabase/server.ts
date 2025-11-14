@@ -1,32 +1,40 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+// lib/supabase/server.ts
+import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
 
-// This function creates a Supabase client configured to run on the server (in API routes, 
-// Server Components, etc.). It is crucial for security and reading cookies correctly.
-export function createSupabaseServerClient() {
-  // CRITICAL FIX: Cast the result of cookies() to 'any' immediately 
-  // to prevent TypeScript from complaining about the .get method signature.
-  const cookieStore = cookies() as any; 
+/**
+ * Server-side Supabase client bound to Next.js cookies.
+ * Works in RSC / route handlers in Next 15/16.
+ */
+export async function getServerClient() {
+  const cookieStore = await cookies();
 
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          // The '.get(name)' method returns an object; we only need the value.
-          // The error should now be gone because cookieStore is typed as 'any'.
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          // No need for 'as any' here anymore, as cookieStore is already 'any'
-          cookieStore.set(name, value, options);
-        },
-        remove(name: string, options: CookieOptions) {
-          // No need for 'as any' here anymore, as cookieStore is already 'any'
-          cookieStore.delete(name, options);
-        },
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+  if (!url || !anon) {
+    throw new Error(
+      "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY"
+    );
+  }
+
+  const client = createServerClient(url, anon, {
+    cookies: {
+      get(name: string) {
+        return cookieStore.get(name)?.value;
       },
-    }
-  );
+      // we don't set/remove here; pages/routes will set cookies on the Response
+      set() {},
+      remove() {},
+    },
+  });
+
+  return client;
 }
+
+// alias so you can import { createSupabaseServerClient }
+export const createSupabaseServerClient = getServerClient;
+
+// 👇 important: also export default so imports like
+// `import getServerClient from "@/lib/supabase/server";` work
+export default getServerClient;

@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getBrowserClient } from "@/lib/supabase/client";
 
 export default function SignInClient() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -17,12 +16,13 @@ export default function SignInClient() {
     setError(null);
 
     if (!email || !password) {
-      setError("Please enter both email and password.");
+      setError("Please enter email and password.");
       return;
     }
 
     setSubmitting(true);
     try {
+      // 1) sign in to Supabase on the client
       const supabase = getBrowserClient();
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
@@ -34,10 +34,15 @@ export default function SignInClient() {
         return;
       }
 
-      router.refresh();
+      // 2) tell the server "we're logged in" so middleware/pages can see it
+      await fetch("/api/session", {
+        method: "POST",
+        credentials: "include",
+      });
 
-      const next = searchParams.get("next") || "/";
-      router.replace(next);
+      // 3) now go to the protected page
+      router.push("/dashboard");
+      router.refresh();
     } catch (err: any) {
       setError(err?.message || "Something went wrong.");
     } finally {
@@ -46,50 +51,52 @@ export default function SignInClient() {
   }
 
   return (
-    <main style={{ maxWidth: 420, margin: "64px auto", padding: 24 }}>
-      <h1 style={{ marginBottom: 12 }}>Sign in</h1>
-      <p style={{ color: "#555", marginBottom: 24 }}>
-        Use your email and password from your Supabase auth users.
-      </p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
+        <p className="text-sm text-slate-500 mt-1">
+          Sign in to Budget Shark to access your ingestion tools.
+        </p>
+      </div>
 
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
-        <label style={{ display: "grid", gap: 6 }}>
-          <span>Email</span>
+      <form onSubmit={onSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-slate-700" htmlFor="email">
+            Email
+          </label>
           <input
+            id="email"
             type="email"
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
             required
-            placeholder="you@example.com"
-            style={{ padding: 10, border: "1px solid #ccc", borderRadius: 8 }}
+            className="w-full rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+            placeholder="you@company.com"
           />
-        </label>
+        </div>
 
-        <label style={{ display: "grid", gap: 6 }}>
-          <span>Password</span>
+        <div className="space-y-2">
+          <label
+            className="text-sm font-medium text-slate-700"
+            htmlFor="password"
+          >
+            Password
+          </label>
           <input
+            id="password"
             type="password"
+            autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
             required
+            className="w-full rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             placeholder="••••••••"
-            style={{ padding: 10, border: "1px solid #ccc", borderRadius: 8 }}
           />
-        </label>
+        </div>
 
         {error && (
-          <div
-            role="alert"
-            style={{
-              background: "#fee",
-              color: "#900",
-              padding: 10,
-              borderRadius: 8,
-              border: "1px solid #fbb",
-            }}
-          >
+          <div className="rounded-md bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
             {error}
           </div>
         )}
@@ -97,18 +104,19 @@ export default function SignInClient() {
         <button
           type="submit"
           disabled={submitting}
-          style={{
-            padding: "10px 14px",
-            borderRadius: 8,
-            border: "1px solid #ccc",
-            background: submitting ? "#eee" : "#111",
-            color: submitting ? "#666" : "#fff",
-            cursor: submitting ? "not-allowed" : "pointer",
-          }}
+          className={`w-full rounded-md px-4 py-2 text-sm font-medium text-white ${
+            submitting
+              ? "bg-slate-400 cursor-not-allowed"
+              : "bg-slate-900 hover:bg-slate-950"
+          }`}
         >
           {submitting ? "Signing in…" : "Sign in"}
         </button>
       </form>
-    </main>
+
+      <p className="text-xs text-slate-400 text-center">
+        Future users will land here to access uploads, validation, and dashboards.
+      </p>
+    </div>
   );
 }

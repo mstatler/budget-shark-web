@@ -1,0 +1,210 @@
+/* --- Budget Shark • Budget Spread (sticky header/first col, zebra, bulk, badges) --- */
+
+/* Root */
+.bs-spread-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Header + Card synced widths */
+.bs-spread-header {
+  width: 100%;
+  max-width: 1680px;
+  padding: 0 2.25rem;
+  margin: 0 auto 0.5rem auto;
+}
+
+.bs-spread-card {
+  width: 100%;
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 2rem 2.25rem;
+  border-radius: 1.25rem;
+  background: #fff;
+}
+
+/* Toolbar */
+.bs-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.bs-toolbar-left { display: flex; gap: 1rem; }
+
+.bs-bulk-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Table wrapper */
+.bs-table-wrapper {
+  width: 100%;
+  overflow-x: auto;           /* wide table can scroll horizontally */
+  margin-top: 0.75rem;
+}
+
+/* Table */
+.bs-table-spread {
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.95rem;
+  min-width: 2200px;
+  margin-left: 0;
+  margin-right: auto;
+  width: max-content;
+  background: #fff;
+}
+
+/* Sticky header */
+.bs-table-spread thead th {
+  position: sticky;
+  top: 0;
+  z-index: 7;                 /* above cells */
+  background: #f9fafb;
+  box-shadow: inset 0 -1px 0 #e5e7eb;
+}
+
+/* Sticky first column (header + body) */
+.bs-sticky-first {
+  position: sticky;
+  left: 0;
+  z-index: 6;
+  background: #fff;
+  box-shadow: 1px 0 0 #e5e7eb; /* subtle divider when scrolling */
+}
+
+/* Cells */
+.bs-table-spread th,
+.bs-table-spread td {
+  padding: 0.5rem 0.45rem;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.bs-table-spread th {
+  font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+}
+.bs-table-spread td { border-bottom: 1px solid #e5e7eb; }
+
+.bs-th-right, .bs-td-right { text-align: right; }
+
+/* Column widths – tuned so Annual sits close to Account */
+.bs-table-spread th:nth-child(1), .bs-table-spread td:nth-child(1) { min-width: 190px; } /* Account (sticky) */
+.bs-table-spread th:nth-child(2), .bs-table-spread td:nth-child(2) { min-width: 170px; } /* Annual */
+.bs-table-spread th:nth-child(3), .bs-table-spread td:nth-child(3) { min-width: 220px; } /* Method */
+.bs-table-spread th:nth-child(n+4):nth-child(-n+15),
+.bs-table-spread td:nth-child(n+4):nth-child(-n+15) { min-width: 150px; }               /* Months */
+.bs-table-spread th:last-child, .bs-table-spread td:last-child { min-width: 200px; }     /* Total */
+
+/* Center headers for numeric columns (Annual + Months + Total) */
+.bs-table-spread th:nth-child(2),
+.bs-table-spread th:nth-child(n+4):nth-child(-n+15),
+.bs-table-spread th:last-child {
+  text-align: center !important;
+}
+
+/* Keep numeric data cells right-aligned */
+.bs-table-spread td:nth-child(2),
+.bs-table-spread td:nth-child(n+4):nth-child(-n+15),
+.bs-table-spread td:last-child {
+  text-align: right;
+}
+
+/* Zebra striping + row hover */
+.bs-table-spread tbody tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+.bs-table-spread tbody tr:hover td {
+  background: #f6f8fb;
+}
+
+/* Account cell layout */
+.bs-account-cell { display: flex; flex-direction: column; gap: 0.15rem; }
+.bs-account-line { display: flex; align-items: center; gap: 0.5rem; }
+.bs-row-checkbox { margin: 0; }
+.bs-account-name { font-weight: 600; color: #111827; font-size: 0.95rem; }
+.bs-account-code { color: #6b7280; font-size: 0.8rem; }
+
+/* Select-all checkbox inside header */
+.bs-select-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+/* Method cell + inline actions */
+.bs-method-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.bs-inline-actions {
+  display: inline-flex;
+  gap: 0.4rem;
+  margin-left: 0.25rem;
+}
+.bs-link-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  color: #2563eb;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.bs-link-btn:hover { text-decoration: underline; }
+.bs-inline-dot { color: #9ca3af; }
+
+/* Total cell with live delta badge */
+.bs-total-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.bs-badge-delta {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  border-radius: 999px;
+  background: #fee2e2;   /* red-100 */
+  color: #991b1b;        /* red-800 */
+  border: 1px solid #fecaca;
+}
+
+/* Inputs */
+.bs-input-number {
+  text-align: right;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.4rem 0.55rem;
+  font-size: 0.95rem;
+}
+.bs-input-annual { width: 180px; }
+.bs-input-month  { width: 150px; }
+
+.bs-input-number:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+
+/* Selects */
+.bs-select {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.4rem 0.55rem;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+/* Wider on huge screens */
+@media (min-width: 1800px) {
+  .bs-spread-header,
+  .bs-spread-card { max-width: 1800px; }
+  .bs-table-spread { min-width: 2400px; }
+}

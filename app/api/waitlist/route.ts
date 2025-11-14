@@ -1,41 +1,37 @@
-import { NextResponse } from "next/server";
+// app/api/waitlist/route.ts
 
 export async function POST(req: Request) {
-  // Parse body safely
-  const { email, source } = await req.json().catch(() => ({} as any));
+  const contentType = req.headers.get("content-type") || "";
+  let email: string | null = null;
 
-  if (!email || typeof email !== "string") {
-    return NextResponse.json({ ok: false, error: "Email required" }, { status: 400 });
-  }
+  try {
+    if (contentType.includes("application/json")) {
+      const body = await req.json();
+      email = body?.email ?? null;
+    } else if (contentType.includes("application/x-www-form-urlencoded")) {
+      const formData = await req.formData();
+      email = (formData.get("email") as string) ?? null;
+    }
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key =
-    process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!email) {
+      return new Response(
+        JSON.stringify({ ok: false, error: "Email required" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
-  if (!url || !key) {
-    return NextResponse.json(
-      { ok: false, error: "Server not configured (missing Supabase envs)" },
-      { status: 500 }
+    // ✅ Add your saving or logging logic here
+    // Example: await saveEmailToDatabase(email);
+
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error("Waitlist error:", err);
+    return new Response(
+      JSON.stringify({ ok: false, error: "Internal server error" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
-
-  const resp = await fetch(`${url}/rest/v1/waitlist`, {
-    method: "POST",
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-      Prefer: "return=representation",
-    },
-    body: JSON.stringify([{ email, source: source ?? "coming-soon" }]),
-    cache: "no-store",
-  });
-
-  if (!resp.ok) {
-    const text = await resp.text();
-    return NextResponse.json({ ok: false, error: text }, { status: 500 });
-  }
-
-  const data = await resp.json();
-  return NextResponse.json({ ok: true, data: data?.[0] ?? null });
 }

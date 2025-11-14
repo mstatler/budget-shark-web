@@ -13,13 +13,11 @@ export default function HomePage() {
       {/* Top bar */}
       <header className="landing-topbar" role="banner">
         <Link href="/" className="landing-brand" aria-label="Budget Shark home">
-          <Image
-            src="/images/budget-shark-logo.png"
-            alt="Budget Shark logo"
-            width={160}
-            height={48}
-            className="landing-logo"
-            priority
+         <img
+          src="/images/budget-shark-logo.png"
+        alt="Budget Shark logo"
+        width={160}
+        height={48}
           />
         </Link>
 

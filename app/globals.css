@@ -2,39 +2,1170 @@
 @tailwind components;
 @tailwind utilities;
 
-/* --- Global site styles --- */
+/* --- Budget Shark landing page styles --- */
+
+.hero-shell {
+  max-width: 60rem; /* 960px */
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 4rem;
+  text-align: center;
+}
+
+.hero-pill {
+  display: inline-block;
+  background: #e0efff;
+  color: #075985;
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.35rem 0.8rem;
+  border-radius: 9999px;
+  margin-bottom: 1.5rem;
+}
+
+.hero-title {
+  font-size: clamp(2.4rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  max-width: 42rem;
+  margin: 0 auto;
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.hero-waitlist-box {
+  max-width: 26rem;
+  margin: 2.5rem auto 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  padding: 1.3rem 1.3rem 1rem;
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.04);
+}
+
+.hero-waitlist-box p {
+  margin-bottom: 0.75rem;
+  font-size: 0.8rem;
+  color: #475569;
+}
+
+.hero-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.hero-form input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.hero-form button {
+  width: 100%;
+  border: none;
+  border-radius: 0.6rem;
+  background: #0369a1;
+  color: #fff;
+  font-weight: 500;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.hero-form button:hover {
+  background: #075985;
+}
+
+.hero-footnote {
+  margin-top: 0.6rem;
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.landing-footer {
+  margin-top: 3.5rem;
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.topbar {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topbar a {
+  text-decoration: none;
+  color: #020617;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 640px) {
+  .hero-form {
+    flex-direction: row;
+  }
+  .hero-form button {
+    width: auto;
+  }
+}
+
+/* --- Shared base tweaks --- */
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-family: "Inter", sans-serif;
+  background-color: #ffffff;
+  color: #0f172a;
+  margin: 0;
+  padding: 0;
 }
 
-/* Make links look nicer by default */
 a {
-  color: inherit;
   text-decoration: none;
+  color: inherit;
 }
+
 a:hover {
   text-decoration: underline;
 }
 
-/* Blog / MDX prose styling */
-.prose {
-  max-width: 65ch;
-}
-.prose img {
-  border-radius: 0.75rem;
-}
-.prose pre {
-  border-radius: 0.75rem;
-}
-.prose code {
-  font-size: 0.875rem;
+/* --- Dashboard header --- */
+
+.bs-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(248, 250, 252, 0.96);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
 }
 
-/* Utility for page containers */
-.page-shell {
-  max-width: 72rem; /* 1152px */
+.bs-header-inner {
+  max-width: 1280px;        /* match main content width */
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 12px 24px;       /* a bit more breathing room */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* logo left, user block right */
 }
+
+
+/* LEFT SIDE */
+
+.bs-header-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.bs-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bs-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.bs-header-org {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* RIGHT SIDE */
+
+.bs-header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* push contents to the right */
+  gap: 14px;
+  margin-left: auto;         /* ensures it hugs the right edge */
+  padding-right: 12px;       /* optional: add breathing room */
+}
+
+.bs-header-user {
+  text-align: right;
+}
+
+.bs-header-welcome {
+  font-size: 13px;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.bs-header-last-login {
+  font-size: 11px;
+  color: #64748b;
+}
+
+/* LOGOUT BUTTON */
+
+.bs-header-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
+  color: #0f172a;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
+}
+
+.bs-header-logout:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+}
+
+.bs-header-logout-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.bs-header-logout-text {
+  display: inline-block;
+}
+
+/* ============================
+   Dashboard layout + sidebar
+   ============================ */
+
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc; /* light slate-ish */
+  color: #0f172a;
+}
+
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  /* remove min-height */
+}
+
+/* Main content area */
+.dashboard-content {
+  flex: 1;
+  max-width: 1280px;      /* match header */
+  margin: 0 auto;         /* center the same way as header */
+  padding: 4px 24px 24px;
+}
+
+
+/* Sidebar base */
+.app-sidebar {
+  width: 230px;              /* a bit slimmer */
+  background-color: #0b1220; /* deep navy */
+  color: #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #111827;
+  min-height: 100vh;         /* ensure full-height sidebar */
+}
+
+/* Spacer that pushes the bottom section down (currently unused, safe to keep) */
+.sidebar-spacer {
+  flex-grow: 1;
+}
+
+/* ===== Sidebar Navigation ===== */
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;            /* let nav take remaining space above Settings */
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  color: #d1d5db; /* light gray text */
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.nav-link:hover {
+  background-color: #374151; /* hover gray */
+  color: #f9fafb; /* slightly brighter text */
+}
+
+.nav-link-active {
+  background-color: #2563eb; /* blue highlight */
+  color: #ffffff;
+}
+
+.nav-link-active:hover {
+  background-color: #1d4ed8; /* slightly darker on hover */
+}
+
+.nav-link svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* section label */
+.sidebar-section-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+  margin-bottom: 12px;
+}
+
+/* Sidebar links - slightly larger with more padding */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: #d1d5db;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.08s ease;
+}
+
+.nav-link svg {
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.nav-link:hover {
+  background-color: #111827;
+  color: #f9fafb;
+  transform: translateX(1px);
+}
+
+/* Active item gets a subtle left accent */
+.nav-link-active {
+  background-color: #020617;
+  color: #f9fafb;
+  border-left: 3px solid #38bdf8;
+  padding-left: 7px; /* compensate for left border */
+}
+
+/* spacers to control vertical rhythm */
+.sidebar-spacer-top {
+  height: 48px;  /* pushes Upload down from top */
+}
+
+.sidebar-spacer-group {
+  height: 64px;  /* gaps between Upload ↔ Input Pages, Allocations ↔ Reporting */
+}
+
+/* Bottom section (e.g., Settings) */
+.sidebar-bottom {
+  border-top: 1px solid #111827;
+  padding: 12px 18px 16px;
+  margin-top: auto;          /* 👈 pins Settings to bottom of sidebar */
+}
+
+/* ===========================
+   Dashboard main layout
+   =========================== */
+
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;        /* slightly tighter spacing between sections */
+  padding: 0px 0 0px;  /* less space below header, less space at bottom */
+}
+
+/* Page header */
+
+.dashboard-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dashboard-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dashboard-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Top metrics row */
+
+.dashboard-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 1100px) {
+  .dashboard-metrics-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .dashboard-metrics-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard-metric-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 16px 18px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dashboard-metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-metric-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.dashboard-metric-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dashboard-metric-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dashboard-metric-caption {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.dashboard-metric-trend {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.dashboard-metric-trend.positive {
+  color: #16a34a;
+}
+
+.dashboard-metric-trend.warning {
+  color: #ea580c;
+}
+
+.dashboard-metric-trend.neutral {
+  color: #6b7280;
+}
+
+/* Lower grid: Quick actions + Recent activity */
+
+.dashboard-lower-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 4fr);
+  gap: 20px;
+}
+
+@media (max-width: 1100px) {
+  .dashboard-lower-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Generic dashboard cards */
+
+.dashboard-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.04);
+  padding: 20px 22px;
+}
+
+.dashboard-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.dashboard-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dashboard-card-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+/* Quick actions */
+
+.dashboard-quick-actions {
+  /* tweaks for left card if needed */
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 720px) {
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.quick-action {
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  padding: 14px 16px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease,
+    transform 0.15s ease, border-color 0.15s ease;
+  font: inherit;
+  text-decoration: none;
+  color: inherit;
+}
+
+.quick-action:hover {
+  background-color: #f3f4f6;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+  transform: translateY(-1px);
+  border-color: #d1d5db;
+}
+
+.quick-action-primary {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+.quick-action-primary:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.quick-action-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.quick-action-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.quick-action-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.quick-action-caption {
+  font-size: 12px;
+  color: inherit;
+  opacity: 0.9;
+}
+
+/* Recent activity */
+
+.dashboard-recent-activity {
+  /* tweaks for right card if needed */
+}
+
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-title-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.activity-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.activity-badge {
+  font-size: 11px;
+  text-transform: lowercase;
+  border-radius: 999px;
+  padding: 2px 8px;
+  border: 1px solid transparent;
+}
+
+.activity-badge.completed {
+  background-color: #ecfdf3;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+.activity-badge.pending {
+  background-color: #fffbeb;
+  border-color: #fed7aa;
+  color: #c2410c;
+}
+
+.activity-description {
+  font-size: 13px;
+  color: #374151;
+}
+
+.activity-meta {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.activity-time {
+  font-size: 12px;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+/* ===== Associates Input Page ===== */
+
+.bs-page {
+  /* let .dashboard-content control centering and width */
+  max-width: 100%;
+  margin: 0;
+  padding: 4px 0 32px 0;  /* no extra horizontal padding */
+}
+
+.bs-page-header {
+  margin-bottom: 16px;
+}
+
+.bs-page-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #111827;
+}
+
+.bs-page-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.bs-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.bs-table tfoot tr {
+  border-top: 2px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+.bs-totals-row td {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-weight: 600;
+  color: #0f172a;
+}
+.bs-td-left-strong {
+  text-align: left;
+  font-weight: 600;
+}
+
+/* ===== Associates Table: sticky header, sticky first 3 cols, sticky totals ===== */
+
+/* Ensure horizontal scroll is enabled (you already have this) */
+.bs-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Make sure sticky cells paint over normal cells */
+.bs-table-associates th,
+.bs-table-associates td {
+  background: #ffffff;
+  position: relative;
+  z-index: 0; /* baseline */
+  white-space: nowrap; /* optional: prevent wrap in narrow cells */
+}
+
+/* Sticky header */
+.bs-table-associates thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3; /* above sticky columns */
+  background: #ffffff;
+  box-shadow: inset 0 -1px 0 #e5e7eb;
+}
+
+/* Sticky totals row (footer) */
+.bs-table-associates tfoot td {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  background: #f9fafb; /* light shade for totals */
+  border-top: 2px solid #e5e7eb;
+}
+
+/* Column widths for the sticky columns (tune to taste) */
+.bs-table-associates .col-dept  { min-width: 80px;  width: 80px;  }
+.bs-table-associates .col-assoc { min-width: 120px; width: 120px; }
+.bs-table-associates .col-name  { min-width: 160px; width: 180px; }
+
+/* Sticky first three columns (left freeze) */
+.bs-table-associates .col-dept {
+  position: sticky;
+  left: 0;
+  z-index: 4; /* above header/footer */
+  background: #ffffff;
+  box-shadow: 1px 0 0 #e5e7eb; /* small divider on the right edge */
+}
+
+.bs-table-associates .col-assoc {
+  position: sticky;
+  left: 80px; /* equals width of col-dept */
+  z-index: 4;
+  background: #ffffff;
+  box-shadow: 1px 0 0 #e5e7eb;
+}
+
+.bs-table-associates .col-name {
+  position: sticky;
+  left: 90px + 130px; /* CSS can't calc; set explicit total below */
+  left: 200px;        /* 90 + 130 */
+  z-index: 4;
+  background: #ffffff;
+  box-shadow: 1px 0 0 #e5e7eb;
+}
+
+/* Totals row look & feel (you already added some of this; safe to keep once) */
+.bs-table tfoot tr {
+  border-top: 2px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.bs-totals-row td {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.bs-td-left-strong {
+  text-align: left;
+  font-weight: 600;
+}
+
+
+/* card specific to associates page so we can tweak later if needed */
+.bs-associates-card {
+  padding: 20px 24px 24px;
+}
+
+/* toolbar with dropdowns + save button */
+
+.bs-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.bs-toolbar-left {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.bs-toolbar-actions {
+  display: flex;
+  align-items: flex-end;
+}
+
+/* fields + selects */
+
+.bs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bs-field-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.bs-select {
+  min-width: 180px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  font-size: 14px;
+  color: #111827;
+  outline: none;
+}
+
+.bs-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+}
+
+/* button */
+
+.bs-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.bs-button-primary {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.bs-button-primary:hover {
+  background-color: #1d4ed8;
+}
+
+/* table */
+
+.bs-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.bs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.bs-table thead tr {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.bs-table th,
+.bs-table td {
+  padding: 10px 12px;
+}
+
+.bs-table tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.bs-table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+/* alignment helpers for numeric columns */
+
+.bs-th-left {
+  text-align: left;
+}
+
+.bs-th-right {
+  text-align: right;
+}
+
+.bs-td-right {
+  text-align: right;
+}
+
+.bs-td-emphasis {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* responsive tweak */
+
+@media (max-width: 900px) {
+  .bs-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .bs-toolbar-actions {
+    justify-content: flex-start;
+  }
+
+  .bs-select {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+/* ===== Controllables Input Page ===== */
+
+.bs-controllables-card {
+  padding: 20px 24px 24px;
+}
+
+.bs-table-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin: 8px 0 8px;
+}
+
+/* small spacing between stacked table wrappers */
+.bs-table-wrapper + .bs-table-wrapper {
+  margin-top: 40px;
+}
+
+/* numeric input cells in controllables grid */
+.bs-input-number {
+  width: 100%;
+  max-width: 110px;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 13px;
+  text-align: right;
+  background-color: #ffffff;
+}
+
+.bs-input-number:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+}
+
+.bs-table-wrapper + .bs-table-wrapper {
+  margin-top: 40px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* --- Shared input page shell (Controllables + Allocations) --- */
+
+.input-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4px 24px 32px;
+}
+
+.input-page-header {
+  margin-bottom: 16px;
+}
+
+.input-page-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.input-page-subtitle {
+  font-size: 0.9rem;
+  color: #6b7280; /* muted gray */
+}
+
+/* Main white card that holds filters + table */
+.input-card {
+  background-color: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  padding: 20px 20px 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+/* Top row inside card: filters on left, Save button on right */
+.input-card-header-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.input-card-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* Filters row (reused from Controllables) */
+.input-page-filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+}
+
+.filter-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.filter-select {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+  background-color: #ffffff;
+}
+
+/* Section title above table */
+.input-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 8px 0 12px;
+}
+
+/* Table styling – same feel as Controllables */
+.input-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.input-grid-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.input-grid-table th,
+.input-grid-table td {
+  border: 1px solid #e5e7eb;
+  padding: 8px 10px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.input-grid-table th:first-child,
+.input-grid-table td:first-child,
+.input-grid-table th:nth-child(2),
+.input-grid-table td:nth-child(2) {
+  text-align: left;
+}
+
+/* Numeric input fields in each cell */
+.input-grid-number {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 4px 8px;
+  text-align: right;
+  font-size: 0.85rem;
+  background-color: #f9fafb;
+}
+
+.input-grid-number:focus {
+  outline: none;
+  border-color: #2563eb; /* blue */
+  background-color: #ffffff;
+}
+
+/* --- Allocations Input page spacing adjustments --- */
+.input-page.allocations-page .input-card {
+  padding-top: 16px;
+}
+
+.input-page.allocations-page .input-card-header-row {
+  margin-bottom: 8px; /* tighter gap below filters */
+}
+
+.input-page.allocations-page .input-section-title {
+  margin-top: 0;
+  margin-bottom: 6px; /* pull table header closer */
+}
+
+.input-page.allocations-page .input-table-wrapper {
+  margin-top: 0;
+}
+

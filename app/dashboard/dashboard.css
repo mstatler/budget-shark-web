@@ -1,0 +1,113 @@
+/* Overall dashboard layout */
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc; /* light slate-ish */
+  color: #0f172a;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100vh;
+}
+
+/* Main content area */
+.dashboard-content {
+  flex: 1;
+  max-width: 1120px; /* ~max-w-6xl */
+  margin: 0 auto;
+  padding: 24px 24px 32px;
+}
+
+/* Sidebar base */
+.app-sidebar {
+  width: 260px;
+  background-color: #020617; /* very dark navy */
+  color: #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #1e293b;
+}
+
+/* Sidebar brand / logo area */
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  padding: 18px 16px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.sidebar-logo {
+  font-size: 1.4rem;
+  background-color: #1e293b;
+  border-radius: 10px;
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.sidebar-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.sidebar-brand-sub {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+/* Sidebar navigation */
+.sidebar-nav {
+  flex: 1;
+  padding: 16px;
+}
+
+.sidebar-section-title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+/* Sidebar links */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.nav-link:hover {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+.nav-link-active {
+  background-color: #334155;
+  color: #f8fafc;
+}
+
+/* Bottom section (e.g., Settings) */
+.sidebar-bottom {
+  border-top: 1px solid #1e293b;
+  padding: 10px 16px 14px;
+}

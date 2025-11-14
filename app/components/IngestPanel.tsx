@@ -1,27 +1,33 @@
 "use client";
 
 import * as React from "react";
+import styles from "./IngestPanel.module.css";
 
 // --- helpers ---
 function getCookie(name: string): string {
-  return (
-    document.cookie
-      .split(";")
-      .map((s) => s.trim())
-      .find((s) => s.startsWith(name + "="))
-      ?.split("=")[1] ?? ""
-  );
+  if (typeof document === "undefined") return "";
+  const cookieString = document.cookie || "";
+  const parts = cookieString.split(";");
+  for (const part of parts) {
+    const s = part.trim();
+    if (s.startsWith(name + "=")) {
+      return decodeURIComponent(s.slice(name.length + 1));
+    }
+  }
+  return "";
 }
 
-type JobSummary = {
-  status?: string;
-  rows_total?: number;
-  rows_written?: number;
-  invalid_count?: number;
-  finished_at?: string | null;
-  normalized_path?: string | null;
-  archive_ok?: boolean | null;
-} | null;
+type JobSummary =
+  | {
+      status?: string;
+      rows_total?: number;
+      rows_written?: number;
+      invalid_count?: number;
+      finished_at?: string | null;
+      normalized_path?: string | null;
+      archive_ok?: boolean | null;
+    }
+  | null;
 
 export default function IngestPanel() {
   const [file, setFile] = React.useState<File | null>(null);
@@ -34,11 +40,12 @@ export default function IngestPanel() {
   const [lastUploadId, setLastUploadId] = React.useState("");
   const [job, setJob] = React.useState<JobSummary>(null);
 
+  const [isDragging, setIsDragging] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  // ensure org cookie for local testing
+  // ensure org cookie for local testing (runs only in browser)
   React.useEffect(() => {
-    if (!document.cookie.includes("bs_org_id")) {
+    if (typeof document !== "undefined" && !document.cookie.includes("bs_org_id")) {
       document.cookie =
         "bs_org_id=3164b5e3-1f46-46a3-b890-c99b797a3722; Path=/; SameSite=Lax";
     }
@@ -49,15 +56,40 @@ export default function IngestPanel() {
     []
   );
 
-  // --- actions ---
+  // --- file picking / drag & drop ---
   function onPick() {
     inputRef.current?.click();
   }
+
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0] ?? null;
     setFile(f);
     setFileName(f ? f.name : "No file chosen");
   }
+
+  function onDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    const f = e.dataTransfer.files?.[0] ?? null;
+    if (f) {
+      setFile(f);
+      setFileName(f.name);
+    }
+  }
+
+  function onDragOver(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isDragging) setIsDragging(true);
+  }
+
+  function onDragLeave(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  }
+
   function onClear() {
     setFile(null);
     setFileName("No file chosen");
@@ -66,6 +98,7 @@ export default function IngestPanel() {
     setJob(null);
   }
 
+  // --- actions ---
   async function onUpload() {
     if (!file) {
       setResult("Please choose a CSV or XLSX file first.");
@@ -96,13 +129,14 @@ export default function IngestPanel() {
     xhr.onload = () => {
       setIsUploading(false);
       try {
-        const json = JSON.parse(xhr.responseText);
+        const json: unknown = JSON.parse(xhr.responseText);
         setResult(JSON.stringify(json, null, 2));
+
         const id =
-          json?.data && typeof json.data.uploadId === "string"
-            ? json.data.uploadId
-            : "";
-        if (json?.ok && id) {
+          (json as { data?: { uploadId?: string }; ok?: boolean })?.data
+            ?.uploadId ?? "";
+
+        if ((json as { ok?: boolean })?.ok && id) {
           setLastUploadId(id);
           setManualUploadId(id);
         }
@@ -110,6 +144,7 @@ export default function IngestPanel() {
         setResult("Error: Could not parse response.");
       }
     };
+
     xhr.onerror = () => {
       setIsUploading(false);
       setResult("Error: Upload failed (network).");
@@ -162,7 +197,7 @@ export default function IngestPanel() {
     });
     const json = await res.json();
     setResult(JSON.stringify(json, null, 2));
-    // Quick capture for summary row
+
     if (json?.ok && json?.data) {
       setJob({
         status: json.data.status,
@@ -182,11 +217,10 @@ export default function IngestPanel() {
       setResult("Enter an uploadId to check job status.");
       return;
     }
-    const res = await fetch(
-      `/api/promotion?uploadId=${encodeURIComponent(useId)}`
-    );
+    const res = await fetch(`/api/promotion?uploadId=${encodeURIComponent(useId)}`);
     const json = await res.json();
     setResult(JSON.stringify(json, null, 2));
+
     if (json?.ok && json?.data) {
       setJob({
         status: json.data.status,
@@ -214,141 +248,155 @@ export default function IngestPanel() {
     setResult(JSON.stringify(json, null, 2));
   }
 
-  const barColor = !isUploading && progress > 0 ? "bg-green-600" : "bg-blue-600";
+  const showProgress = isUploading || progress > 0;
 
   return (
-    <section className="space-y-6">
-      <h2 className="text-lg font-semibold">Ingest Pipeline</h2>
+    <section className={styles.shell}>
+      <h2 className={styles.title}>Upload • Validate • Promote • Preview</h2>
 
-      {/* Upload */}
-      <div className="rounded border border-gray-200 p-4 space-y-3">
-        <h3 className="font-medium">1) Upload</h3>
+      {/* Step 1: Upload */}
+      <div className={styles.card}>
+        <div className={styles.cardHeader}>
+          <span className={styles.stepPill}>Step 1</span>
+          <h3 className={styles.cardTitle}>Upload File</h3>
+        </div>
+
         <input
           ref={inputRef}
           type="file"
           name="file"
           accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv"
-          className="hidden"
+          className={styles.hiddenInput}
           onChange={onFileChange}
         />
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-          <button
-            type="button"
-            onClick={onPick}
-            className="rounded px-4 py-2 bg-gray-200 text-gray-800 hover:bg-gray-300"
-          >
-            Browse
-          </button>
-          <span className="text-sm text-gray-700 truncate flex-1">{fileName}</span>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onUpload}
-              disabled={isUploading}
-              className={`rounded px-4 py-2 text-white ${
-                isUploading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-              }`}
-            >
-              {isUploading ? "Uploading…" : "Upload"}
-            </button>
-            <button
-              type="button"
-              onClick={onClear}
-              disabled={isUploading}
-              className="rounded px-3 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200"
-            >
-              Clear
-            </button>
-          </div>
-        </div>
 
-        {(isUploading || progress > 0) && (
-          <div className="w-full bg-gray-200 rounded h-4 overflow-hidden mt-1">
-            <div className={`${barColor} h-4 transition-all`} style={{ width: `${progress}%` }}>
-              <span
-                className={`block text-center text-xs font-medium ${
-                  progress < 10 ? "text-gray-800" : "text-white"
+        <div
+          className={`${styles.dropzone} ${isDragging ? styles.dropzoneActive : ""}`}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          role="button"
+          aria-label="Drag and drop a CSV or XLSX file here"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") onPick();
+          }}
+        >
+          <div className={styles.fileRow}>
+            <div className={styles.fileMeta}>
+              <div className={styles.fileIcon} aria-hidden />
+              <div className={styles.fileName} title={fileName}>
+                {fileName}
+              </div>
+            </div>
+
+            <div className={styles.fileActions}>
+              <button
+                type="button"
+                onClick={onPick}
+                className={`${styles.btn} ${styles.btnGhost}`}
+              >
+                Browse
+              </button>
+              <button
+                type="button"
+                onClick={onUpload}
+                disabled={isUploading}
+                className={`${styles.btn} ${styles.btnPrimary} ${
+                  isUploading ? styles.btnDisabled : ""
                 }`}
               >
-                {progress}%
-              </span>
+                {isUploading ? "Uploading…" : "Upload"}
+              </button>
+              <button
+                type="button"
+                onClick={onClear}
+                disabled={isUploading}
+                className={`${styles.btn} ${styles.btnSubtle}`}
+              >
+                Clear
+              </button>
             </div>
           </div>
-        )}
+
+          {showProgress && (
+            <div className={styles.progressWrap}>
+              <div
+                className={`${styles.progressBar} ${
+                  !isUploading && progress > 0 ? styles.progressSuccess : ""
+                }`}
+                style={{ width: `${progress}%` }}
+              >
+                <span className={styles.progressText}>{progress}%</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Validate / Promote / Preview */}
-      <div className="rounded border border-gray-200 p-4 space-y-3">
-        <h3 className="font-medium">2) Validate • 3) Promote • 4) Preview</h3>
+      {/* Steps 2–4: Process */}
+      <div className={styles.card}>
+        <div className={styles.cardHeader}>
+          <span className={styles.stepPill}>Steps 2–4</span>
+          <h3 className={styles.cardTitle}>Process Data</h3>
+        </div>
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className={styles.controlsRow}>
           <input
             type="text"
             placeholder="Upload ID"
             value={manualUploadId}
             onChange={(e) => setManualUploadId(e.target.value)}
-            className="w-full sm:flex-1 rounded border border-gray-300 px-3 py-2 text-sm"
+            className={styles.input}
           />
-          <button
-            type="button"
-            onClick={onValidate}
-            className="rounded px-4 py-2 bg-gray-800 text-white hover:bg-gray-900"
-          >
+
+          <button type="button" onClick={onValidate} className={`${styles.btn} ${styles.btnDark}`}>
             Validate (read-only)
           </button>
-          <button
-            type="button"
-            onClick={onPromote}
-            className="rounded px-4 py-2 bg-green-600 text-white hover:bg-green-700"
-          >
+
+          <button type="button" onClick={onPromote} className={`${styles.btn} ${styles.btnSuccess}`}>
             Promote (post to ledger)
           </button>
-          <button
-            type="button"
-            onClick={onPreview}
-            className="rounded px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700"
-          >
+
+          <button type="button" onClick={onPreview} className={`${styles.btn} ${styles.btnPurple}`}>
             Preview posted rows
           </button>
-          <button
-            type="button"
-            onClick={onJobStatus}
-            className="rounded px-4 py-2 bg-slate-600 text-white hover:bg-slate-700"
-          >
+
+          <button type="button" onClick={onJobStatus} className={`${styles.btn} ${styles.btnSlate}`}>
             Refresh job status
           </button>
         </div>
 
         {lastUploadId && (
-          <p className="text-xs text-gray-600">
-            Last uploadId:&nbsp;
-            <code className="px-1 py-0.5 bg-gray-100 rounded">{lastUploadId}</code>
+          <p className={styles.subtleNote}>
+            Last uploadId:&nbsp;<code className={styles.code}>{lastUploadId}</code>
           </p>
         )}
 
-        {/* Job summary pills */}
         {job && (
-          <div className="text-xs text-gray-700 grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
-            <span className="inline-block rounded bg-gray-100 px-2 py-1">
+          <div className={styles.pillsGrid}>
+            <span className={styles.pill}>
               Status: <strong>{job.status || "?"}</strong>
             </span>
-            <span className="inline-block rounded bg-gray-100 px-2 py-1">
+            <span className={styles.pill}>
               Rows: <strong>{job.rows_written ?? 0}</strong> / {job.rows_total ?? 0}
             </span>
-            <span className="inline-block rounded bg-gray-100 px-2 py-1">
+            <span className={styles.pill}>
               Invalid: <strong>{job.invalid_count ?? 0}</strong>
             </span>
-            <span className="inline-block rounded bg-gray-100 px-2 py-1">
+            <span className={styles.pill}>
               Finished: <strong>{job.finished_at || "—"}</strong>
             </span>
           </div>
         )}
       </div>
 
-      {/* Output */}
-      <div>
-        <h3 className="font-medium">Result</h3>
-        <pre className="text-sm bg-gray-100 p-3 rounded overflow-auto min-h-[140px]">
+      {/* Result console */}
+      <div className={styles.card}>
+        <div className={styles.cardHeader}>
+          <h3 className={styles.cardTitle}>Result</h3>
+        </div>
+        <pre className={styles.console} aria-live="polite">
           {result || "Result will appear here…"}
         </pre>
       </div>

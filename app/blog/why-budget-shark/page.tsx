@@ -15,7 +15,7 @@ export default function WhyBudgetSharkPage() {
 
       <article className="prose prose-slate dark:prose-invert">
         <p>
-          Budget Shark is my attempt to take the budgeting/forecasting process I&apos;ve been doing at Marriott and
+          Budget Shark is my attempt to take the budgeting/forecasting process I&apos;ve been doing at my day job and
           make it simpler, repeatable, and way less spreadsheet-y. Most teams end up with scattered Excel files,
           emailed versions, weird column orders, and no single source of truth.
         </p>

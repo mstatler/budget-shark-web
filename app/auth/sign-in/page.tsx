@@ -1,70 +1,36 @@
-"use client";
+// app/auth/sign-in/page.tsx
+import { cookies } from "next/headers";
+import SignInClient from "./SignInClient";
 
-import * as React from "react";
+export default async function SignInPage() {
+  const cookieStore = await cookies();
+  const hasBridge = cookieStore.get("bs_auth");
 
-export default function Home() {
-  const [email, setEmail] = React.useState("");
-  const [status, setStatus] = React.useState<"idle" | "submitting" | "ok" | "err">("idle");
-  const [msg, setMsg] = React.useState("");
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setStatus("submitting");
-    setMsg("");
-
-    try {
-      const res = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source: "landing" }),
-      });
-      const json = await res.json();
-      if (json?.ok) {
-        setStatus("ok");
-        setMsg("Thanks! You’re on the list. We’ll email you when the beta opens.");
-        setEmail("");
-      } else {
-        setStatus("err");
-        setMsg(json?.error || "Something went wrong. Please try again.");
-      }
-    } catch (err: any) {
-      setStatus("err");
-      setMsg(err?.message || "Network error. Please try again.");
-    }
-  }
+  const isLoggedIn = Boolean(hasBridge);
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-8">
-      <div className="max-w-xl w-full space-y-6 text-center">
-        <h1 className="text-3xl font-semibold">Budget Shark — Coming Soon</h1>
-        <p className="text-gray-600">
-          Cleaner budgeting & forecasting. Fewer spreadsheets. Faster answers.
-        </p>
-
-        <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2 justify-center">
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="w-full sm:w-72 rounded border border-gray-300 px-3 py-2"
-          />
-          <button
-            disabled={status === "submitting"}
-            className={`rounded px-4 py-2 text-white ${
-              status === "submitting" ? "bg-gray-500 cursor-not-allowed" : "bg-black hover:bg-gray-900"
-            }`}
-          >
-            {status === "submitting" ? "Adding…" : "Notify me"}
-          </button>
-        </form>
-
-        {msg && (
-          <p className={`text-sm ${status === "ok" ? "text-green-700" : "text-red-700"}`}>{msg}</p>
+    <main className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+      <div className="w-full max-w-md">
+        {isLoggedIn ? (
+          <div className="rounded-xl bg-white border border-slate-200 shadow-sm p-8 space-y-4">
+            <h1 className="text-2xl font-semibold tracking-tight">
+              You&apos;re signed in ✅
+            </h1>
+            <p className="text-sm text-slate-500">
+              Welcome back. You can go to your dashboard.
+            </p>
+            <a
+              href="/dashboard"
+              className="inline-flex items-center justify-center rounded-md bg-sky-600 text-white px-4 py-2 text-sm font-medium hover:bg-sky-700"
+            >
+              Go to Dashboard
+            </a>
+          </div>
+        ) : (
+          <div className="rounded-xl bg-white border border-slate-200 shadow-sm p-8">
+            <SignInClient />
+          </div>
         )}
-
-        <p className="text-xs text-gray-500">We’ll only email you about the beta launch.</p>
       </div>
     </main>
   );
